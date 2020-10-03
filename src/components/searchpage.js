@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import SearchMovies from "./components/searchpage";
-import Home from "./components/HomePage";
+import SearchBar from "./SearchBar";
+import Results from "./Results";
+import Popup from "./Popup";
+import axios from "axios";
 
-function App() {
-/*  const [state, setState] = useState({
+function SearchPage() {
+  const [state, setState] = useState({
     searchQuery: "",
     results: [],
     selected: {},
@@ -104,16 +105,46 @@ function App() {
         next_call: true,
       };
     });
-  };*/
+  };
   return (
-    <Router>
-      <Switch>
-        <Route path="/search" component={SearchMovies}/>
-        <Route path="/" component={Home}/>
-      </Switch>
-    </Router>
+    <div className="App">
+        <header>
+        <h1>Movie Databse</h1>
+        </header>
+        <main>
+            <SearchBar inputHandler={inputHandler} search={search} />
+            {state.err_message === "" ? (
+                <Results results={state.results} openPopup={openPopup} />
+            ) : (
+                <div className="error">{state.err_message}</div>
+            )}
+            <br />
+            {state.results.length === 0 ||
+            state.page_num === 1 ||
+            state.err_message !== "" ? null : (
+                <button className="back" type="button" onClick={prevPageHandler}>
+                Previous
+                </button>
+            )}
+            {state.results.length < 10 || state.err_message !== "" ? null : (
+                <button className="next" type="button" onClick={nextPageHandler}>
+                Next
+                </button>
+            )}
+            {typeof state.selected.Title !== "undefined" ? (
+                <Popup selected={state.selected} closePopup={closePopup} />
+            ) : (
+                false
+            )}
+        </main>
+    </div>
 
   );
 }
 
-export default App;
+export default SearchPage;
+
+
+
+
+
